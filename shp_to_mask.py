@@ -24,7 +24,7 @@ with rasterio.open(geotiff_path) as geotiff:
     # creare immagine con stessa size del geotiff
     mask = np.zeros((geotiff.height, geotiff.width, 3), np.uint8)    
 
-    for folder in os.listdir(shp_folder):
+    for folder in sorted(os.listdir(shp_folder)):
 
         color = colors[folder[0:4]]
 
@@ -35,6 +35,8 @@ with rasterio.open(geotiff_path) as geotiff:
 
             with fiona.open(os.path.join(shp_folder, folder, shp_file), "r") as shapefile:
                 
+                print(shp_file)
+
                 for feature in shapefile:
                     geometry = shape(feature["geometry"])                    
 
@@ -51,4 +53,4 @@ with rasterio.open(geotiff_path) as geotiff:
 
                     cv2.fillPoly(mask, pts=[np.array(polygon)], color=color)
 
-    cv2.imwrite("test.png", mask)
+    cv2.imwrite("mask.png", mask)
