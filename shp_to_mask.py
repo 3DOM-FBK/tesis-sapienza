@@ -6,8 +6,11 @@ from shapely.geometry import shape
 import cv2
 from shapely.geometry.polygon import Polygon
 
+if len(sys.argv) < 4:
+    print("\nNot enough parameters!\n\nUsage:\n\n  python shp_to_mask.py <GeoTIFF file path> <Shapefiles folder> <output folder>\n")
+    exit()
 
-colors = {
+colors = { # Put the first 4 letters of the shapefiles file names as keys
     "B01a" : (255, 0 , 0),
     "B01b" : (0, 255 , 0),
     "B01c" : (0, 0 , 255),
@@ -16,8 +19,10 @@ colors = {
     "B03a" : (0, 255 , 255),
     "B04a" : (0, 120 , 200)
 }
+
 geotiff_path = sys.argv[1]
 shp_folder = sys.argv[2]
+output_folder = sys.argv[3]
 
 with rasterio.open(geotiff_path) as geotiff:
 
@@ -35,7 +40,7 @@ with rasterio.open(geotiff_path) as geotiff:
 
             with fiona.open(os.path.join(shp_folder, folder, shp_file), "r") as shapefile:
                 
-                print(shp_file)
+                print(shp_file, shapefile.meta)
 
                 for feature in shapefile:
                     geometry = shape(feature["geometry"])                    
